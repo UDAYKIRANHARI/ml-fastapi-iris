@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Iris Classifier UI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #4f46e5, #22c55e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 480px;
+            padding: 24px 28px;
+            border-radius: 16px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.18);
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+            font-size: 1.6rem;
+        }
+
+        p.subtitle {
+            text-align: center;
+            margin-top: 4px;
+            margin-bottom: 20px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 4px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 0.95rem;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 1px #4f46e5;
+        }
+
+        button {
+            margin-top: 18px;
+            width: 100%;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #4f46e5, #22c55e);
+            color: #ffffff;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #result {
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+        }
+
+        .prob-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .prob-bar {
+            flex: 1;
+            margin-left: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+
+        .prob-bar-inner {
+            height: 100%;
+            border-radius: 999px;
+            background: #4f46e5;
+        }
+
+        .small {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 6px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Iris Classifier</h1>
+    <p class="subtitle">Enter the flower measurements and get the predicted species.</p>
+
+    <form id="iris-form">
+        <label>
+            Sepal length (cm)
+            <input type="number" id="sepal_length" step="0.1" required />
+        </label>
+        <label>
+            Sepal width (cm)
+            <input type="number" id="sepal_width" step="0.1" required />
+        </label>
+        <label>
+            Petal length (cm)
+            <input type="number" id="petal_length" step="0.1" required />
+        </label>
+        <label>
+            Petal width (cm)
+            <input type="number" id="petal_width" step="0.1" required />
+        </label>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <div id="result"></div>
+    <div class="small">Powered by FastAPI + scikit-learn</div>
+</div>
+
+<script>
+    const form = document.getElementById("iris-form");
+    const resultDiv = document.getElementById("result");
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const data = {
+            sepal_length: parseFloat(document.getElementById("sepal_length").value),
+            sepal_width: parseFloat(document.getElementById("sepal_width").value),
+            petal_length: parseFloat(document.getElementById("petal_length").value),
+            petal_width: parseFloat(document.getElementById("petal_width").value),
+        };
+
+        resultDiv.textContent = "Predicting...";
+
+        try {
+            const response = await fetch("/predict", {   // ← relative URL (works locally + in deployment)
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                resultDiv.textContent = "Error: " + errorText;
+                return;
+            }
+
+            const json = await response.json();
+
+            const probs = json.class_probabilities || {};
+            let probsHtml = "";
+
+            for (const [cls, val] of Object.entries(probs)) {
+                const pct = (val * 100).toFixed(1);
+                probsHtml += `
+                    <div class="prob-row">
+                        <span>${cls}</span>
+                        <span style="margin-left:8px;">${pct}%</span>
+                        <div class="prob-bar">
+                            <div class="prob-bar-inner" style="width:${pct}%;"></div>
+                        </div>
+                    </div>`;
+            }
+
+            resultDiv.innerHTML =
+                `<strong>Predicted class:</strong> ${json.predicted_class}<br><br>` +
+                `<strong>Class probabilities:</strong><br>` +
+                probsHtml;
+        } catch (err) {
+            console.error(err);
+            resultDiv.textContent = "Request failed: " + err;
+        }
+    });
+</script>
+</body>
+</html>
