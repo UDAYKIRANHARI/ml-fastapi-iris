@@ -5,6 +5,14 @@
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-latest-orange.svg)](https://scikit-learn.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+## 🚀 Live Deployment
+
+**Try it now**: [https://uday0715-ml-fastapi-iris.hf.space](https://uday0715-ml-fastapi-iris.hf.space)
+
+- **🌐 Interactive UI**: [https://uday0715-ml-fastapi-iris.hf.space/ui](https://uday0715-ml-fastapi-iris.hf.space/ui)
+- - **📚 API Documentation**: [https://uday0715-ml-fastapi-iris.hf.space/docs](https://uday0715-ml-fastapi-iris.hf.space/docs)
+  - - **🔬 API Testing**: [https://uday0715-ml-fastapi-iris.hf.space/redoc](https://uday0715-ml-fastapi-iris.hf.space/redoc)
+
 A production-ready Machine Learning REST API built with FastAPI that classifies Iris flower species using a trained Logistic Regression model. Features a clean web UI for interactive predictions and comprehensive API documentation.
 
 ## 🎯 Features
