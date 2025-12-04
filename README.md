@@ -5,6 +5,8 @@
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-latest-orange.svg)](https://scikit-learn.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+## 👉 [**TRY THE LIVE INTERACTIVE UI HERE**](https://uday0715-ml-fastapi-iris.hf.space/ui) 👈
+
 ## 🚀 Live Deployment
 
 **Try it now**: [https://uday0715-ml-fastapi-iris.hf.space](https://uday0715-ml-fastapi-iris.hf.space)
